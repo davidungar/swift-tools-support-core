@@ -216,13 +216,13 @@ public final class Process: ObjectIdentifierProtocol {
         return DWORD(_process?.processIdentifier ?? 0)
     }
   #else
-    public private(set) var processID = ProcessID()
+    public var processID = ProcessID()
   #endif
 
     /// If the subprocess has launched.
     /// Note: This property is not protected by the serial queue because it is only mutated in `launch()`, which will be
     /// called only once.
-    public private(set) var launched = false
+    public var launched = false
 
     /// The result of the process execution. Available after process is terminated.
     public var result: ProcessResult? {
@@ -238,10 +238,10 @@ public final class Process: ObjectIdentifierProtocol {
     private var _result: ProcessResult?
 
     /// If redirected, stdout result and reference to the thread reading the output.
-    private var stdout: (result: Result<[UInt8], Swift.Error>, thread: Thread?) = (.success([]), nil)
+    public var stdout: (result: Result<[UInt8], Swift.Error>, thread: Thread?) = (.success([]), nil)
 
     /// If redirected, stderr result and reference to the thread reading the output.
-    private var stderr: (result: Result<[UInt8], Swift.Error>, thread: Thread?) = (.success([]), nil)
+    public var stderr: (result: Result<[UInt8], Swift.Error>, thread: Thread?) = (.success([]), nil)
 
     /// Queue to protect concurrent reads.
     private let serialQueue = DispatchQueue(label: "org.swift.swiftpm.process")
@@ -626,7 +626,7 @@ public final class Process: ObjectIdentifierProtocol {
     /// Reads the given fd and returns its result.
     ///
     /// Closes the fd before returning.
-    private func readOutput(onFD fd: Int32, outputClosure: OutputClosure?) -> Result<[UInt8], Swift.Error> {
+    public func readOutput(onFD fd: Int32, outputClosure: OutputClosure?) -> Result<[UInt8], Swift.Error> {
         // Read all of the data from the output pipe.
         let N = 4096
         var buf = [UInt8](repeating: 0, count: N + 1)
